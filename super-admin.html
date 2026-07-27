@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Super Admin | ARS Prayer Warriors</title>
+
+<link rel="stylesheet" href="../style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+
+<h2>
+ARS Prayer Warriors
+</h2>
+
+<p>
+Super Admin Control Panel
+</p>
+
+</div>
+
+
+<button id="logoutBtn">
+Logout
+</button>
+
+
+</header>
+
+
+
+
+
+<section class="dashboard">
+
+
+<h2>
+Welcome Super Admin
+</h2>
+
+
+
+
+
+<div class="mission-container">
+
+
+
+
+
+<a href="dashboard.html" class="card-link">
+
+<div class="card">
+
+<h3>
+Main Dashboard
+</h3>
+
+<p>
+View website statistics and management tools.
+</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+
+
+<a href="members.html" class="card-link">
+
+<div class="card">
+
+<h3>
+Member Management
+</h3>
+
+<p>
+View and manage registered members.
+</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+
+
+<a href="contributions.html" class="card-link">
+
+<div class="card">
+
+<h3>
+Agbedededor Contribution
+</h3>
+
+<p>
+Manage contribution records and payments.
+</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+
+
+<a href="prayer-request.html" class="card-link">
+
+<div class="card">
+
+<h3>
+Prayer Requests
+</h3>
+
+<p>
+Review and manage prayer requests.
+</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+
+
+<a href="programs.html" class="card-link">
+
+<div class="card">
+
+<h3>
+Programs Management
+</h3>
+
+<p>
+Add and update church programs.
+</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+
+
+<a href="announcements.html" class="card-link">
+
+<div class="card">
+
+<h3>
+Announcements
+</h3>
+
+<p>
+Post and manage announcements.
+</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+
+
+<a href="testimonies.html" class="card-link">
+
+<div class="card">
+
+<h3>
+Testimony Management
+</h3>
+
+<p>
+Review, approve and manage testimonies.
+</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+
+
+<a href="gallery.management.html" class="card-link">
+
+<div class="card">
+
+<h3>
+Gallery Management
+</h3>
+
+<p>
+Upload and manage church pictures.
+</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+
+
+<div class="card">
+
+<h3>
+Website Settings
+</h3>
+
+<p>
+Logo, colors, fonts and other settings.
+</p>
+
+<p>
+<strong>Coming Soon</strong>
+</p>
+
+</div>
+
+
+
+
+
+</div>
+
+
+</section>
+<footer>
+
+<h3>
+ARS Prayer Warriors
+</h3>
+
+<p>
+The Home of Prayer
+</p>
+
+</footer>
+
+
+
+
+
+<script type="module">
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+
+import {
+
+getAuth,
+onAuthStateChanged,
+signOut
+
+} from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCVdwVvhwDaohSisqWzPirzJr7pGsyVwuc",
+
+authDomain: "ars-prayer-warriors-2.firebaseapp.com",
+
+projectId: "ars-prayer-warriors-2",
+
+storageBucket: "ars-prayer-warriors-2.firebasestorage.app",
+
+messagingSenderId: "65956421710",
+
+appId: "1:65956421710:web:8dd96b64409a289216a31f"
+
+};
+
+
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const auth = getAuth(app);
+
+
+
+
+
+// Check admin login status
+
+onAuthStateChanged(auth,(user)=>{
+
+
+if(!user){
+
+
+window.location.href="login.html";
+
+
+}
+
+
+});
+
+
+
+
+
+
+// Logout
+
+const logoutBtn = document.getElementById("logoutBtn");
+
+
+logoutBtn.addEventListener("click", async()=>{
+
+
+try{
+
+
+await signOut(auth);
+
+
+alert("Logged out successfully");
+
+
+window.location.href="login.html";
+
+
+}
+
+catch(error){
+
+
+console.log(error);
+
+
+}
+
+
+});
+
+
+
+
+
+</script>
+
+
+</body>
+
+
+</html>

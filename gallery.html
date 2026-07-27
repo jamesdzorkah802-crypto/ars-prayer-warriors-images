@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gallery | ARS Prayer Warriors</title>
+
+<link rel="stylesheet" href="../style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+
+<h2>ARS Prayer Warriors</h2>
+
+<p>Gallery</p>
+
+</div>
+
+</header>
+
+
+
+<section class="gallery">
+
+
+<h2>Our Gallery</h2>
+
+
+<div id="galleryContainer">
+
+
+<div class="card">
+
+<h3>
+Loading images...
+</h3>
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+
+<footer>
+
+<h3>ARS Prayer Warriors</h3>
+
+<p>The Home of Prayer</p>
+
+</footer>
+
+
+
+
+<script type="module">
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+
+getFirestore,
+collection,
+getDocs
+
+} from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCVdwVvhwDaohSisqWzPirzJr7pGsyVwuc",
+
+authDomain: "ars-prayer-warriors-2.firebaseapp.com",
+
+projectId: "ars-prayer-warriors-2",
+
+storageBucket: "ars-prayer-warriors-2.firebasestorage.app",
+
+messagingSenderId: "65956421710",
+
+appId: "1:65956421710:web:8dd96b64409a289216a31f"
+
+};
+
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+
+const galleryContainer = document.getElementById("galleryContainer");
+
+
+
+async function loadGallery(){
+
+
+const snapshot = await getDocs(collection(db,"gallery"));
+
+
+galleryContainer.innerHTML = "";
+
+
+
+snapshot.forEach((item)=>{
+
+
+const data = item.data();
+
+
+
+galleryContainer.innerHTML += `
+
+
+<div class="card">
+
+
+<img src="${data.imageUrl}" width="300">
+
+
+<h3>
+${data.title}
+</h3>
+
+
+<p>
+${data.description}
+</p>
+
+
+</div>
+
+
+`;
+
+
+});
+
+
+}
+
+
+
+loadGallery();
+
+
+
+</script>
+
+
+
+</body>
+
+</html>

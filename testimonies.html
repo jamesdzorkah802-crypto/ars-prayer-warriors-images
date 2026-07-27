@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Member Testimonies | ARS Prayer Warriors</title>
+
+<link rel="stylesheet" href="../style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+
+<h2>ARS Prayer Warriors</h2>
+
+<p>Member Testimonies</p>
+
+</div>
+
+</header>
+
+
+
+
+<section class="mission">
+
+
+<h2>
+Testimonies of God's Faithfulness
+</h2>
+
+
+<p style="text-align:center;">
+Read and be encouraged by what God is doing in the lives of ARS Prayer Warriors members.
+</p>
+
+
+
+<div id="allTestimonies" class="mission-container">
+
+
+<div class="card">
+
+<p>
+Loading testimonies...
+</p>
+
+</div>
+
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+<footer>
+
+<h3>
+ARS Prayer Warriors
+</h3>
+
+<p>
+The Home of Prayer
+</p>
+
+
+</footer>
+
+
+
+
+
+
+
+<script type="module">
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+
+getFirestore,
+collection,
+query,
+where,
+orderBy,
+onSnapshot
+
+} from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCVdwVvhwDaohSisqWzPirzJr7pGsyVwuc",
+
+authDomain: "ars-prayer-warriors-2.firebaseapp.com",
+
+projectId: "ars-prayer-warriors-2",
+
+storageBucket: "ars-prayer-warriors-2.firebasestorage.app",
+
+messagingSenderId: "65956421710",
+
+appId: "1:65956421710:web:8dd96b64409a289216a31f"
+
+};
+
+
+
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+
+
+
+
+const testimonyContainer = document.getElementById("allTestimonies");
+
+
+
+
+
+
+const testimonyQuery = query(
+
+collection(db,"testimonies"),
+
+where("status","==","approved"),
+
+orderBy("submittedAt","desc")
+
+);
+
+
+
+
+
+
+onSnapshot(testimonyQuery,(snapshot)=>{
+
+
+testimonyContainer.innerHTML="";
+
+
+
+if(snapshot.empty){
+
+
+testimonyContainer.innerHTML = `
+
+<div class="card">
+
+<h3>No Approved Testimonies Yet</h3>
+
+<p>
+Approved member testimonies will appear here.
+</p>
+
+</div>
+
+`;
+
+
+return;
+
+}
+
+
+
+
+
+snapshot.forEach((item)=>{
+
+
+const data = item.data();
+
+
+
+testimonyContainer.innerHTML += `
+
+
+<div class="card">
+
+
+<h3>
+${data.category || "Testimony"}
+</h3>
+
+
+
+<h4>
+${data.title || ""}
+</h4>
+
+
+
+<p>
+<strong>${data.name}</strong>
+</p>
+
+
+
+<p>
+${data.message}
+</p>
+
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+
+});
+
+
+
+</script>
+
+
+</body>
+
+</html>

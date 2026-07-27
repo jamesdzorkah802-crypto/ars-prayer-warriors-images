@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Super Admin Dashboard | ARS Prayer Warriors</title>
+
+<link rel="stylesheet" href="../style.css">
+
+<style>
+
+.card-link{
+    text-decoration:none;
+    color:inherit;
+    display:block;
+}
+
+.card-link .card{
+    cursor:pointer;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+
+<h2>ARS Prayer Warriors</h2>
+
+<p>Super Admin Dashboard</p>
+
+</div>
+
+</header>
+
+
+
+
+<section class="dashboard">
+
+<h2>Admin Control Panel</h2>
+
+
+
+
+<div class="stats">
+
+
+<div class="card">
+
+<h3>Total Members</h3>
+
+<p id="memberCount">0</p>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>Total Contributions</h3>
+
+<p id="totalContribution">GHS 0</p>
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="mission-container">
+
+
+
+
+
+<a href="./members.html" class="card-link">
+
+<div class="card">
+
+<h3>Members</h3>
+
+<p>Manage registered members</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+
+
+<a href="./contributions.html" class="card-link">
+
+<div class="card">
+
+<h3>Agbedededor Contribution</h3>
+
+<p>Update and manage contribution records</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+
+
+<a href="./prayer-request.html" class="card-link">
+
+<div class="card">
+
+<h3>Prayer Requests</h3>
+
+<p>Review and respond to prayer requests</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+
+
+<a href="./programs.html" class="card-link">
+
+<div class="card">
+
+<h3>Programs</h3>
+
+<p>Add or edit prayer programs</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+
+
+<a href="./announcements.html" class="card-link">
+
+<div class="card">
+
+<h3>Announcements</h3>
+
+<p>Post updates for members</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+<a href="./testimonies.html" class="card-link">
+
+<div class="card">
+
+<h3>Testimony Management</h3>
+
+<p>Review, approve and manage member testimonies</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+<div class="card">
+
+<h3>Website Settings</h3>
+
+<p>Change logo, colors, text and settings</p>
+
+<p><strong>Coming soon</strong></p>
+
+</div>
+
+
+
+
+
+
+
+<a href="./gallery.management.html" class="card-link">
+
+<div class="card">
+
+<h3>Gallery Management</h3>
+
+<p>Upload and manage church pictures.</p>
+
+<p><strong>Tap to open</strong></p>
+
+</div>
+
+</a>
+
+
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+<footer>
+
+<h3>ARS Prayer Warriors</h3>
+
+<p>The Home of Prayer</p>
+
+</footer>
+
+
+
+
+
+
+
+
+<script type="module">
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+
+import {
+
+getFirestore,
+collection,
+getDocs
+
+} from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+
+import {
+
+getAuth,
+onAuthStateChanged
+
+} from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+
+
+
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCVdwVvhwDaohSisqWzPirzJr7pGsyVwuc",
+
+authDomain: "ars-prayer-warriors-2.firebaseapp.com",
+
+projectId: "ars-prayer-warriors-2",
+
+storageBucket: "ars-prayer-warriors-2.firebasestorage.app",
+
+messagingSenderId: "65956421710",
+
+appId: "1:65956421710:web:8dd96b64409a289216a31f"
+
+};
+
+
+
+
+
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+const auth = getAuth(app);
+
+
+
+
+
+
+
+
+onAuthStateChanged(auth,(user)=>{
+
+
+if(!user){
+
+
+window.location.href="../login.html";
+
+
+}
+
+
+});
+
+
+
+
+
+
+
+
+async function loadStats(){
+
+
+try{
+
+
+const members = await getDocs(collection(db,"members"));
+
+
+document.getElementById("memberCount").innerHTML = members.size;
+
+
+
+
+
+const contributions = await getDocs(collection(db,"contributions"));
+
+
+let total = 0;
+
+
+
+
+
+contributions.forEach(item=>{
+
+
+total += Number(item.data().amount || 0);
+
+
+});
+
+
+
+
+
+document.getElementById("totalContribution").innerHTML =
+
+"GHS " + total;
+
+
+
+}
+
+
+catch(error){
+
+
+console.log(error);
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+loadStats();
+
+
+
+</script>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Member Management | ARS Prayer Warriors</title>
+
+<link rel="stylesheet" href="../style.css">
+
+<style>
+
+table {
+    width:100%;
+    border-collapse: collapse;
+    margin-top:20px;
+}
+
+th, td {
+    padding:12px;
+    border:1px solid #ddd;
+    text-align:left;
+}
+
+input {
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+}
+
+button {
+    padding:8px 12px;
+    cursor:pointer;
+}
+
+.member-count {
+    font-size:18px;
+    margin:15px 0;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+
+<h2>ARS Prayer Warriors</h2>
+
+<p>Super Admin - Member Management</p>
+
+</div>
+
+</header>
+
+
+
+
+<section class="prayer">
+
+
+<h2>Registered Members</h2>
+
+
+<p class="member-count">
+Total Members: <span id="totalMembers">0</span>
+</p>
+
+
+
+<input 
+type="text" 
+id="search"
+placeholder="Search member..."
+>
+
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>Name</th>
+
+<th>Phone</th>
+
+<th>Email</th>
+
+<th>Status</th>
+
+<th>Date Joined</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+
+
+<tbody id="membersTable">
+
+
+<tr>
+
+<td colspan="6">
+Loading members...
+</td>
+
+</tr>
+
+
+</tbody>
+
+
+</table>
+
+
+</section>
+
+
+
+
+
+<footer>
+
+<h3>
+ARS Prayer Warriors
+</h3>
+
+<p>
+The Home of Prayer
+</p>
+
+</footer>
+
+
+
+
+
+<script type="module">
+
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import { 
+getFirestore,
+collection,
+getDocs,
+deleteDoc,
+doc
+} from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCVdwVvhwDaohSisqWzPirzJr7pGsyVwuc",
+
+authDomain: "ars-prayer-warriors-2.firebaseapp.com",
+
+projectId: "ars-prayer-warriors-2",
+
+storageBucket: "ars-prayer-warriors-2.firebasestorage.app",
+
+messagingSenderId: "65956421710",
+
+appId: "1:65956421710:web:8dd96b64409a289216a31f"
+
+};
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+
+const table = document.getElementById("membersTable");
+
+const count = document.getElementById("totalMembers");
+
+const search = document.getElementById("search");
+
+
+
+let members = [];
+
+
+
+async function loadMembers(){
+
+
+const snapshot = await getDocs(collection(db,"members"));
+
+
+members=[];
+
+
+snapshot.forEach((item)=>{
+
+
+members.push({
+
+id:item.id,
+
+...item.data()
+
+});
+
+
+});
+
+
+count.innerHTML = members.length;
+
+
+displayMembers(members);
+
+
+}
+
+
+
+
+function displayMembers(data){
+
+
+table.innerHTML="";
+
+
+
+data.forEach(member=>{
+
+
+table.innerHTML += `
+
+<tr>
+
+<td>${member.name}</td>
+
+<td>${member.phone}</td>
+
+<td>${member.email}</td>
+
+<td>${member.status}</td>
+
+<td>${member.date.toDate()}</td>
+
+<td>
+
+<button onclick="deleteMember('${member.id}')">
+
+Delete
+
+</button>
+
+</td>
+
+
+</tr>
+
+`;
+
+
+});
+
+
+}
+
+
+
+
+
+window.deleteMember = async function(id){
+
+
+let confirmDelete = confirm(
+"Are you sure you want to delete this member?"
+);
+
+
+
+if(confirmDelete){
+
+
+await deleteDoc(doc(db,"members",id));
+
+
+alert("Member deleted");
+
+
+loadMembers();
+
+
+}
+
+
+}
+
+
+
+
+
+search.addEventListener("input",()=>{
+
+
+const value = search.value.toLowerCase();
+
+
+const filtered = members.filter(member=>
+
+member.name.toLowerCase().includes(value)
+
+);
+
+
+
+displayMembers(filtered);
+
+
+});
+
+
+
+
+onAuthStateChanged(auth,(user)=>{
+
+if(user){
+
+loadMembers();
+
+}else{
+
+window.location.href="login.html";
+
+}
+
+});
+
+
+
+</script>
+
+
+
+</body>
+
+</html>

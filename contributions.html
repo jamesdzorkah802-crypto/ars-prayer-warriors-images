@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Contribution Management | ARS Prayer Warriors</title>
+
+<link rel="stylesheet" href="../style.css">
+
+
+<style>
+
+table {
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th, td {
+padding:12px;
+border:1px solid #ddd;
+text-align:left;
+}
+
+input, select, textarea {
+width:100%;
+padding:10px;
+margin:8px 0;
+}
+
+button {
+padding:10px 15px;
+cursor:pointer;
+margin:5px;
+}
+
+.box {
+margin-bottom:30px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+
+<h2>
+ARS Prayer Warriors
+</h2>
+
+<p>
+Agbedededor Contribution Management
+</p>
+
+</div>
+
+</header>
+
+
+
+<section class="prayer">
+
+
+<!-- CREATE CONTRIBUTION -->
+
+
+<div class="box">
+
+
+<h2>
+Create New Contribution
+</h2>
+
+
+<form id="typeForm">
+
+
+<input
+id="contributionTitle"
+type="text"
+placeholder="Contribution Title"
+required
+>
+
+
+<textarea
+id="contributionDescription"
+placeholder="Contribution Description"
+required></textarea>
+
+
+
+<select id="contributionStatus">
+
+<option value="Active">
+Active
+</option>
+
+<option value="Closed">
+Closed
+</option>
+
+</select>
+
+
+<button type="submit">
+
+Create Contribution
+
+</button>
+
+
+</form>
+
+
+</div>
+
+
+
+<!-- CONTRIBUTION RECORDS SECTION -->
+
+
+<div class="box">
+
+
+<h2>
+Member Contribution Records
+</h2>
+
+
+
+<button type="button" id="addRowBtn">
+
++ Add Row
+
+</button>
+
+
+
+<button type="button" id="saveAllBtn">
+
+Save All Contributions
+
+</button>
+
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>No.</th>
+
+<th>Contribution Type</th>
+
+<th>Member Name</th>
+
+<th>Phone Number</th>
+
+<th>Amount (GHS)</th>
+
+<th>Period</th>
+
+<th>Start Month</th>
+
+<th>Start Year</th>
+
+<th>Action</th>
+
+
+</tr>
+
+</thead>
+
+
+<tbody id="entryRows">
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+<script type="module">
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+
+getFirestore,
+collection,
+addDoc,
+getDocs,
+doc,
+deleteDoc,
+updateDoc
+
+} from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCVdwVvhwDaohSisqWzPirzJr7pGsyVwuc",
+
+authDomain: "ars-prayer-warriors-2.firebaseapp.com",
+
+projectId: "ars-prayer-warriors-2",
+
+storageBucket: "ars-prayer-warriors-2.firebasestorage.app",
+
+messagingSenderId: "65956421710",
+
+appId: "1:65956421710:web:8dd96b64409a289216a31f"
+
+};
+
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+const auth = getAuth(app);
+
+
+
+const typeForm = document.getElementById("typeForm");
+
+const entryRows = document.getElementById("entryRows");
+
+const addRowBtn = document.getElementById("addRowBtn");
+
+const saveAllBtn = document.getElementById("saveAllBtn");
+
+
+let rowCount = 0;
+  // GET EXISTING RECORD COUNT
+
+async function getExistingCount(){
+
+const snapshot = await getDocs(
+collection(db,"contributions")
+);
+
+return snapshot.size;
+
+}
+
+
+
+// CREATE NEW CONTRIBUTION
+
+
+typeForm.addEventListener("submit", async(e)=>{
+
+
+e.preventDefault();
+
+
+await addDoc(
+
+collection(db,"contributionTypes"),
+
+{
+
+
+title:
+document.getElementById("contributionTitle").value,
+
+
+description:
+document.getElementById("contributionDescription").value,
+
+
+status:
+document.getElementById("contributionStatus").value,
+
+
+date:new Date()
+
+
+}
+
+);
+
+
+
+alert("Contribution created successfully");
+
+
+typeForm.reset();
+
+
+});
+
+
+
+
+// PERIOD OPTIONS
+
+
+let periods = [];
+
+
+for(let y=0; y<=10; y++){
+
+
+for(let m=0; m<=11; m++){
+
+
+if(y===0 && m===0){
+
+continue;
+
+}
+
+
+let text="";
+
+
+if(y>0){
+
+text += y + (y===1 ? " Year" : " Years");
+
+}
+
+
+if(m>0){
+
+if(text){
+
+text += " ";
+
+}
+
+text += m + " " + (m===1 ? "Month" : "Months");
+
+}
+
+
+periods.push(text);
+
+
+}
+
+
+}
+
+
+
+
+function periodOptions(){
+
+
+return periods.map(p=>`
+
+<option>${p}</option>
+
+`).join("");
+
+}
+
+
+
+
+
+// ADD ROW FUNCTION
+
+
+async function addRow(){
+
+
+if(rowCount === 0){
+
+rowCount = await getExistingCount();
+
+}
+
+
+rowCount++;
+
+
+let row=document.createElement("tr");
+
+
+
+row.innerHTML=`
+
+<td>${rowCount}</td>
+
+
+<td>
+
+<input class="type" placeholder="Contribution Type">
+
+</td>
+
+
+<td>
+
+<input class="member" placeholder="Member Name">
+
+</td>
+
+
+<td>
+
+<input class="phone" placeholder="Phone Number">
+
+</td>
+
+
+<td>
+
+<input class="amount" type="number" placeholder="Amount">
+
+</td>
+
+
+<td>
+
+<select class="period">
+
+${periodOptions()}
+
+</select>
+
+</td>
+
+
+<td>
+
+<select class="month">
+
+<option>January</option>
+<option>February</option>
+<option>March</option>
+<option>April</option>
+<option>May</option>
+<option>June</option>
+<option>July</option>
+<option>August</option>
+<option>September</option>
+<option>October</option>
+<option>November</option>
+<option>December</option>
+
+</select>
+
+</td>
+
+
+<td>
+
+<select class="year">
+
+<option>2024</option>
+<option>2025</option>
+<option>2026</option>
+<option>2027</option>
+<option>2028</option>
+<option>2029</option>
+<option>2030</option>
+
+</select>
+
+</td>
+
+
+<td>
+
+<button type="button" class="deleteRow">
+
+Delete
+
+</button>
+
+</td>
+
+`;
+
+
+
+row.querySelector(".deleteRow").onclick=()=>{
+
+row.remove();
+
+};
+
+
+
+entryRows.appendChild(row);
+
+
+}
+
+
+
+addRowBtn.onclick=()=>{
+
+addRow();
+
+};
+  // SAVE ALL CONTRIBUTION ROWS
+
+
+saveAllBtn.onclick = async()=>{
+
+
+const rows = document.querySelectorAll("#entryRows tr");
+
+
+
+if(rows.length === 0){
+
+alert("Please add at least one member row");
+
+return;
+
+}
+
+
+
+try{
+
+
+for(const row of rows){
+
+const type = row.querySelector(".type");
+const member = row.querySelector(".member");
+const phone = row.querySelector(".phone");
+const amount = row.querySelector(".amount");
+const period = row.querySelector(".period");
+const month = row.querySelector(".month");
+const year = row.querySelector(".year");
+
+if(!type || !member || !phone || !amount || !period || !month || !year){
+continue;
+}
+
+const data = {
+
+contributionType: type.value,
+
+member: member.value,
+
+phone: phone.value,
+
+amount: Number(amount.value),
+
+period: period.value,
+
+startMonth: month.value,
+
+startYear: year.value,
+
+date:new Date()
+
+};
+
+
+
+await addDoc(
+
+collection(db,"contributions"),
+
+data
+
+);
+
+
+}
+
+
+
+alert("All contribution records saved successfully");
+
+
+entryRows.innerHTML="";
+
+rowCount=0;
+
+
+loadRecords();
+
+
+}
+
+
+catch(error){
+
+console.log(error);
+
+alert(error.message);
+
+}
+
+
+};
+
+
+
+
+
+// LOAD RECORDS
+
+
+async function loadRecords(){
+
+
+const snapshot = await getDocs(
+
+collection(db,"contributions")
+
+);
+
+
+
+entryRows.innerHTML="";
+
+
+let number = 0;
+
+
+
+snapshot.forEach(item=>{
+
+
+number++;
+
+
+const data=item.data();
+
+
+
+let row=document.createElement("tr");
+
+
+
+row.innerHTML=`
+
+<td>${number}</td>
+
+
+<td>${data.contributionType || ""}</td>
+
+
+<td>${data.member || ""}</td>
+
+
+<td>${data.phone || ""}</td>
+
+
+<td>GHS ${data.amount || 0}</td>
+
+
+<td>${data.period || ""}</td>
+
+
+<td>${data.startMonth || ""}</td>
+
+
+<td>${data.startYear || ""}</td>
+
+
+<td>
+
+
+<button onclick="editContribution('${item.id}')">
+
+Edit
+
+</button>
+
+
+
+<button onclick="deleteContribution('${item.id}')">
+
+Delete
+
+</button>
+
+
+</td>
+
+`;
+
+
+
+entryRows.appendChild(row);
+
+
+
+});
+
+
+  }
+  // DELETE RECORD
+
+
+window.deleteContribution = async function(id){
+
+
+const confirmDelete = confirm(
+
+"Delete this contribution record?"
+
+);
+
+
+
+if(confirmDelete){
+
+
+await deleteDoc(
+
+doc(db,"contributions",id)
+
+);
+
+
+
+alert("Deleted successfully");
+
+
+loadRecords();
+
+
+}
+
+
+};
+
+
+
+
+
+// EDIT RECORD
+
+
+window.editContribution = async function(id){
+
+
+const snapshot = await getDocs(
+
+collection(db,"contributions")
+
+);
+
+
+
+let found;
+
+
+
+snapshot.forEach(item=>{
+
+
+if(item.id === id){
+
+found = item.data();
+
+}
+
+
+});
+
+
+
+if(found){
+
+
+const newType = prompt(
+"Contribution Type:",
+found.contributionType
+);
+
+
+const newMember = prompt(
+"Member Name:",
+found.member
+);
+
+
+const newPhone = prompt(
+"Phone Number:",
+found.phone
+);
+
+
+const newAmount = prompt(
+"Amount:",
+found.amount
+);
+const newPeriod = prompt(
+"Period:",
+found.period
+);
+
+const newMonth = prompt(
+"Start Month:",
+found.startMonth
+);
+
+const newYear = prompt(
+"Start Year:",
+found.startYear
+);
+
+
+await updateDoc(
+
+doc(db,"contributions",id),
+
+{
+  contributionType: newType,
+  member: newMember,
+  phone: newPhone,
+  amount: Number(newAmount),
+  period: newPeriod,
+  startMonth: newMonth,
+  startYear: newYear,
+  date: new Date()
+}
+
+);
+
+
+
+alert("Updated successfully");
+
+
+loadRecords();
+
+
+}
+
+
+};
+
+
+
+
+
+// LOAD DATA WHEN PAGE OPENS
+
+
+onAuthStateChanged(auth, (user) => {
+
+if (user) {
+
+loadRecords();
+
+} else {
+
+window.location.href = "login.html";
+
+}
+
+});
+
+
+
+</script>
+
+
+</section>
+
+
+
+
+
+<footer>
+
+
+<h3>
+ARS Prayer Warriors
+</h3>
+
+
+<p>
+The Home of Prayer
+</p>
+
+
+<p>
+© 2026 ARS Prayer Warriors
+</p>
+
+
+</footer>
+
+
+
+
+</body>
+
+</html>

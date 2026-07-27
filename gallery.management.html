@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gallery Management | ARS Prayer Warriors</title>
+
+<link rel="stylesheet" href="../style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+
+<h2>ARS Prayer Warriors</h2>
+
+<p>Gallery Management</p>
+
+</div>
+
+</header>
+
+
+
+<section class="prayer">
+
+
+<h2 id="formTitle">Add Gallery Image</h2>
+
+
+<form id="galleryForm">
+
+
+<input type="text" id="title" placeholder="Image Title" required>
+
+
+<input type="url" id="imageUrl" placeholder="Paste Image Link" required>
+
+
+<textarea id="description" placeholder="Image Description"></textarea>
+
+
+<button type="submit" id="saveBtn">
+Add Image
+</button>
+
+
+</form>
+
+
+
+<h2>Gallery Images</h2>
+
+
+<div id="galleryList">
+
+Loading images...
+
+</div>
+
+
+
+</section>
+
+
+
+
+<footer>
+
+<h3>ARS Prayer Warriors</h3>
+
+<p>The Home of Prayer</p>
+
+</footer>
+
+
+
+<script type="module">
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+
+getFirestore,
+collection,
+addDoc,
+getDocs,
+deleteDoc,
+doc,
+updateDoc
+
+} from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCVdwVvhwDaohSisqWzPirzJr7pGsyVwuc",
+
+authDomain: "ars-prayer-warriors-2.firebaseapp.com",
+
+projectId: "ars-prayer-warriors-2",
+
+storageBucket: "ars-prayer-warriors-2.firebasestorage.app",
+
+messagingSenderId: "65956421710",
+
+appId: "1:65956421710:web:8dd96b64409a289216a31f"
+
+};
+
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+const auth = getAuth(app);
+
+
+
+const form = document.getElementById("galleryForm");
+
+const list = document.getElementById("galleryList");
+
+
+let editId = null;
+  form.addEventListener("submit", async(e)=>{
+
+e.preventDefault();
+
+
+
+const data = {
+
+title: document.getElementById("title").value,
+
+imageUrl: document.getElementById("imageUrl").value,
+
+description: document.getElementById("description").value
+
+};
+
+
+
+
+
+if(editId){
+
+
+await updateDoc(doc(db,"gallery",editId),data);
+
+
+alert("Image updated successfully");
+
+
+editId = null;
+
+
+document.getElementById("saveBtn").innerHTML="Add Image";
+
+
+document.getElementById("formTitle").innerHTML="Add Gallery Image";
+
+
+
+}
+
+else{
+
+
+await addDoc(collection(db,"gallery"),{
+
+...data,
+
+created:new Date()
+
+});
+
+
+alert("Image added successfully");
+
+
+}
+
+
+
+form.reset();
+
+
+loadImages();
+
+
+
+});
+
+
+
+
+
+
+
+async function loadImages(){
+
+
+const snapshot = await getDocs(collection(db,"gallery"));
+
+
+list.innerHTML="";
+
+
+
+snapshot.forEach(item=>{
+
+
+const data=item.data();
+
+
+
+list.innerHTML += `
+
+
+<div class="card">
+
+
+<h3>${data.title}</h3>
+
+
+<img src="${data.imageUrl}" width="200">
+
+
+<p>${data.description}</p>
+
+
+
+<button onclick="editImage('${item.id}','${data.title}','${data.imageUrl}','${data.description}')">
+
+Edit
+
+</button>
+
+
+
+<button onclick="deleteImage('${item.id}')">
+
+Delete
+
+</button>
+
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+window.editImage=function(id,title,imageUrl,description){
+
+
+editId=id;
+
+
+document.getElementById("title").value=title;
+
+
+document.getElementById("imageUrl").value=imageUrl;
+
+
+document.getElementById("description").value=description;
+
+
+document.getElementById("saveBtn").innerHTML="Update Image";
+
+
+document.getElementById("formTitle").innerHTML="Edit Gallery Image";
+
+
+};
+
+
+
+
+
+
+
+window.deleteImage=async function(id){
+
+
+let confirmDelete=confirm("Delete this image?");
+
+
+if(confirmDelete){
+
+
+await deleteDoc(doc(db,"gallery",id));
+
+
+alert("Image deleted successfully");
+
+
+loadImages();
+
+
+}
+
+
+
+};
+
+
+
+
+
+
+onAuthStateChanged(auth,(user)=>{
+
+if(user){
+
+loadImages();
+
+}else{
+
+window.location.href="login.html";
+
+}
+
+});
+
+
+
+</script>
+
+
+</body>
+
+</html>

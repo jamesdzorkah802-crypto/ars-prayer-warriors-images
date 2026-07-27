@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Programs | ARS Prayer Warriors</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+
+<h2>ARS Prayer Warriors</h2>
+
+<p>The Home of Prayer</p>
+
+</div>
+
+
+<nav>
+
+<ul>
+
+<li><a href="index.html">Home</a></li>
+
+<li><a href="about.html">About</a></li>
+
+<li><a href="programs.html">Programs</a></li>
+
+<li><a href="prayer-request.html">Prayer Request</a></li>
+
+<li><a href="gallery.html">Gallery</a></li>
+
+<li><a href="contact.html">Contact</a></li>
+
+</ul>
+
+</nav>
+
+</header>
+
+
+
+
+<section class="programs">
+
+
+<h2>Our Weekly Programs</h2>
+
+
+
+<div id="programList">
+
+Loading programs...
+
+</div>
+
+
+
+</section>
+
+
+
+
+<footer>
+
+<h3>ARS Prayer Warriors</h3>
+
+<p>The Home of Prayer</p>
+
+</footer>
+
+
+
+
+
+
+<script type="module">
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+
+getFirestore,
+collection,
+getDocs
+
+} from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCVdwVvhwDaohSisqWzPirzJr7pGsyVwuc",
+
+authDomain: "ars-prayer-warriors-2.firebaseapp.com",
+
+projectId: "ars-prayer-warriors-2",
+
+storageBucket: "ars-prayer-warriors-2.firebasestorage.app",
+
+messagingSenderId: "65956421710",
+
+appId: "1:65956421710:web:8dd96b64409a289216a31f"
+
+};
+
+
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const db = getFirestore(app);
+
+
+
+const programList = document.getElementById("programList");
+
+
+
+
+
+async function loadPrograms(){
+
+
+const snapshot = await getDocs(collection(db,"programs"));
+
+
+programList.innerHTML = "";
+
+
+
+snapshot.forEach(item=>{
+
+
+const data = item.data();
+
+
+
+programList.innerHTML += `
+
+
+<div class="program-card">
+
+
+<h3>${data.title}</h3>
+
+
+<p>${data.date}</p>
+
+
+<p>${data.description}</p>
+
+
+</div>
+
+
+`;
+
+
+});
+
+
+}
+
+
+
+
+loadPrograms();
+
+
+
+</script>
+
+
+
+</body>
+
+</html>

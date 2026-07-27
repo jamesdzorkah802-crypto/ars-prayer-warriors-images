@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Announcements | ARS Prayer Warriors</title>
+
+<link rel="stylesheet" href="../style.css">
+
+<style>
+
+button{
+padding:10px;
+cursor:pointer;
+margin:5px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+
+<h2>ARS Prayer Warriors</h2>
+
+<p>Announcement Management</p>
+
+</div>
+
+</header>
+
+
+
+
+
+<section class="prayer">
+
+
+<h2 id="formTitle">Create Announcement</h2>
+
+
+
+
+<form id="announcementForm">
+
+
+<input 
+id="title"
+type="text"
+placeholder="Announcement Title"
+required
+>
+
+
+
+
+<textarea 
+id="message"
+placeholder="Write announcement here..."
+required>
+</textarea>
+
+
+
+
+<button type="submit" id="saveBtn">
+
+Publish Announcement
+
+</button>
+
+
+
+</form>
+
+
+
+
+
+
+<h2>Previous Announcements</h2>
+
+
+
+<div id="announcementList">
+
+Loading announcements...
+
+</div>
+
+
+
+
+</section>
+
+
+
+
+
+
+<footer>
+
+<h3>
+ARS Prayer Warriors
+</h3>
+
+<p>
+The Home of Prayer
+</p>
+
+</footer>
+
+
+
+
+
+
+
+<script type="module">
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+
+import {
+
+getFirestore,
+collection,
+addDoc,
+getDocs,
+doc,
+deleteDoc,
+updateDoc
+
+} from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+getAuth,
+onAuthStateChanged
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+
+
+
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCVdwVvhwDaohSisqWzPirzJr7pGsyVwuc",
+
+authDomain: "ars-prayer-warriors-2.firebaseapp.com",
+
+projectId: "ars-prayer-warriors-2",
+
+storageBucket: "ars-prayer-warriors-2.firebasestorage.app",
+
+messagingSenderId: "65956421710",
+
+appId: "1:65956421710:web:8dd96b64409a289216a31f"
+
+};
+
+
+
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const db = getFirestore(app);
+  const auth = getAuth(app);
+
+
+
+
+const form = document.getElementById("announcementForm");
+
+
+const list = document.getElementById("announcementList");
+
+
+let editId = null;
+
+
+
+
+
+
+
+form.addEventListener("submit", async(e)=>{
+
+
+e.preventDefault();
+
+
+
+
+const data = {
+
+
+title: document.getElementById("title").value,
+
+
+message: document.getElementById("message").value
+
+
+};
+
+
+
+
+
+
+if(editId){
+
+
+
+await updateDoc(doc(db,"announcements",editId),data);
+
+
+
+alert("Announcement updated successfully");
+
+
+
+editId=null;
+
+
+
+document.getElementById("saveBtn").innerHTML="Publish Announcement";
+
+
+document.getElementById("formTitle").innerHTML="Create Announcement";
+
+
+
+}
+
+else{
+
+
+
+await addDoc(collection(db,"announcements"),{
+
+
+...data,
+
+
+date:new Date()
+
+
+});
+
+
+
+alert("Announcement published");
+
+
+
+}
+
+
+
+
+
+
+form.reset();
+
+
+loadAnnouncements();
+
+
+
+});
+
+
+
+
+
+
+
+
+
+async function loadAnnouncements(){
+
+
+
+const snapshot = await getDocs(collection(db,"announcements"));
+
+
+
+list.innerHTML="";
+
+
+
+
+
+snapshot.forEach(item=>{
+
+
+
+const data=item.data();
+
+
+
+
+
+list.innerHTML += `
+
+
+
+<div class="card">
+
+
+
+<h3>${data.title}</h3>
+
+
+
+<p>${data.message}</p>
+
+
+
+<small>
+
+${data.date?.toDate ? data.date.toDate() : ""}
+
+</small>
+
+
+
+
+
+<br>
+
+
+
+<button onclick="editAnnouncement(
+'${item.id}',
+'${data.title}',
+'${data.message}'
+)">
+
+Edit
+
+</button>
+
+
+
+
+
+
+<button onclick="deleteAnnouncement('${item.id}')">
+
+Delete
+
+</button>
+
+
+
+
+
+</div>
+
+
+
+`;
+
+
+
+});
+
+
+
+}
+
+
+
+
+
+
+
+
+
+window.editAnnouncement=function(id,title,message){
+
+
+
+editId=id;
+
+
+
+document.getElementById("title").value=title;
+
+
+document.getElementById("message").value=message;
+
+
+
+
+document.getElementById("saveBtn").innerHTML="Update Announcement";
+
+
+document.getElementById("formTitle").innerHTML="Edit Announcement";
+
+
+
+};
+
+
+
+
+
+
+
+
+
+window.deleteAnnouncement=async function(id){
+
+
+
+let confirmDelete=confirm("Delete this announcement?");
+
+
+
+if(confirmDelete){
+
+
+
+await deleteDoc(doc(db,"announcements",id));
+
+
+
+alert("Announcement deleted successfully");
+
+
+
+loadAnnouncements();
+
+
+
+}
+
+
+
+};
+
+
+
+
+
+
+
+
+onAuthStateChanged(auth,(user)=>{
+
+if(user){
+
+loadAnnouncements();
+
+}else{
+
+window.location.href="login.html";
+
+}
+
+});
+
+
+
+</script>
+
+
+
+
+</body>
+
+</html>

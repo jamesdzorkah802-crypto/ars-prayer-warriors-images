@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Loading | ARS Prayer Warriors</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+height:100vh;
+animation: screenFlash 3s infinite;
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+font-family:Poppins, sans-serif;
+
+background:
+
+linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),
+url("icons/splash-bg.jpg");
+
+background-size:cover;
+
+background-position:center;
+
+background-repeat:no-repeat;
+
+overflow:hidden;
+
+}
+
+.logo{
+
+width:150px;
+
+height:150px;
+
+border-radius:50%;
+
+background:white;
+
+padding:3px;
+
+object-fit:contain;
+
+animation: flashGlow 2s infinite;
+
+box-shadow:0 0 30px rgba(255,255,255,.4);
+
+}
+@keyframes screenFlash{
+
+0%{
+filter:brightness(1);
+}
+
+50%{
+filter:brightness(1.25);
+}
+
+100%{
+filter:brightness(1);
+}
+
+  }
+
+@keyframes flashGlow{
+
+0%{
+box-shadow:0 0 20px white;
+}
+
+50%{
+box-shadow:0 0 50px gold;
+}
+
+100%{
+box-shadow:0 0 20px white;
+}
+
+}
+
+h1{
+
+margin-top:15px;
+
+color:#ffffff;
+
+font-size:32px;
+
+text-align:center;
+
+}
+
+p{
+
+margin-top:0px;
+
+color:gold;
+
+font-size:24px;
+
+font-family:'Great Vibes', cursive;
+
+text-align:center;
+
+}
+
+.loading{
+
+margin-top:35px;
+
+font-size:22px;
+
+font-weight:bold;
+
+color:#ffffff;
+
+}
+
+.dot{
+
+animation:blink 1.5s infinite;
+
+}
+
+.dot:nth-child(2){
+
+animation-delay:.2s;
+
+}
+
+.dot:nth-child(3){
+
+animation-delay:.4s;
+
+}
+
+@keyframes blink{
+
+0%{
+
+opacity:.2;
+
+color:white;
+
+}
+
+50%{
+
+opacity:1;
+
+color:gold;
+
+}
+
+100%{
+
+opacity:.2;
+
+color:white;
+
+}
+
+}
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+</style>
+
+</head>
+
+<body>
+  <img src="icons/icon-512.png" class="logo" alt="ARS Prayer Warriors Logo">
+
+<h1>ARS Prayer Warriors</h1>
+
+<p>The Home of Prayer</p>
+
+<div class="loading">
+
+Loading
+
+<span class="dot">.</span>
+
+<span class="dot">.</span>
+
+<span class="dot">.</span>
+
+</div>
+
+<script>
+
+// Redirect to homepage after 2.5 seconds
+
+setTimeout(function(){
+
+sessionStorage.setItem("arsSplashShown","true");
+
+window.location.href = "index.html";
+
+},2500);
+
+</script>
+
+</body>
+
+</html>

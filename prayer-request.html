@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Prayer Request | ARS Prayer Warriors</title>
+
+<link rel="stylesheet" href="../style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo">
+
+<h2>ARS Prayer Warriors</h2>
+
+<p>The Home of Prayer</p>
+
+</div>
+
+
+
+<nav>
+
+<ul>
+
+<li><a href="../index.html">Home</a></li>
+
+<li><a href="about.html">About</a></li>
+
+<li><a href="programs.html">Programs</a></li>
+
+<li><a href="prayer-request.html">Prayer Request</a></li>
+
+<li><a href="gallery.html">Gallery</a></li>
+
+<li><a href="contact.html">Contact</a></li>
+
+</ul>
+
+</nav>
+
+
+</header>
+
+
+
+
+
+<section class="prayer">
+
+
+<h2>
+Submit Your Prayer Request
+</h2>
+
+
+
+<p>
+Share your prayer request with ARS Prayer Warriors.
+Our prayer team will stand with you in faith.
+</p>
+
+
+
+
+
+<form id="prayerForm">
+
+
+
+<input
+
+id="name"
+
+type="text"
+
+placeholder="Full Name"
+
+required
+
+>
+
+
+
+
+<input
+
+id="contact"
+
+type="text"
+
+placeholder="Phone Number"
+
+required
+
+>
+
+
+
+
+<textarea
+
+id="request"
+
+placeholder="Write your prayer request..."
+
+required>
+
+</textarea>
+
+
+
+
+<button type="submit">
+
+Submit Prayer Request
+
+</button>
+
+
+
+
+</form>
+
+
+
+</section>
+
+
+
+
+
+
+
+<footer>
+
+
+<h3>
+ARS Prayer Warriors
+</h3>
+
+
+
+<p>
+The Home of Prayer
+</p>
+
+
+
+<p>
+© 2026 ARS Prayer Warriors
+</p>
+
+
+
+</footer>
+
+
+
+
+
+
+
+
+<script type="module">
+
+
+import { initializeApp } from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+
+import {
+
+getFirestore,
+
+collection,
+
+addDoc
+
+} from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+
+
+
+
+const firebaseConfig = {
+
+
+apiKey: "AIzaSyCVdwVvhwDaohSisqWzPirzJr7pGsyVwuc",
+
+
+authDomain: "ars-prayer-warriors-2.firebaseapp.com",
+
+
+projectId: "ars-prayer-warriors-2",
+
+
+storageBucket: "ars-prayer-warriors-2.firebasestorage.app",
+
+
+messagingSenderId: "65956421710",
+
+
+appId: "1:65956421710:web:8dd96b64409a289216a31f"
+
+
+};
+
+
+
+
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const db = getFirestore(app);
+
+
+
+
+const form = document.getElementById("prayerForm");
+
+
+
+
+
+
+
+function generateRequestCode(){
+
+
+const number = Math.floor(10000 + Math.random() * 90000);
+
+
+return "ARS-" + number;
+
+
+}
+
+
+
+
+
+
+
+
+form.addEventListener("submit", async(e)=>{
+
+
+e.preventDefault();
+
+
+
+
+
+const requestCode = generateRequestCode();
+
+
+
+
+
+await addDoc(collection(db,"prayerRequests"),{
+
+
+name:
+
+document.getElementById("name").value,
+
+
+
+contact:
+
+document.getElementById("contact").value,
+
+
+
+request:
+
+document.getElementById("request").value,
+
+
+
+status:
+
+"Pending",
+
+
+
+requestCode:
+
+requestCode,
+
+
+
+date:
+
+new Date()
+
+
+
+});
+
+
+
+
+
+
+alert(
+
+"Your prayer request has been submitted successfully.\n\n" +
+
+"Your Request Code is: " + requestCode +
+
+"\n\nKeep this code safe to check your prayer status."
+
+);
+
+
+
+
+
+
+form.reset();
+
+
+
+
+
+});
+
+
+
+</script>
+
+
+
+
+
+</body>
+
+</html>
